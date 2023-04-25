@@ -7,7 +7,7 @@ use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Illuminate\Console\Command;
 
-class EnkinLog extends Command
+class EnkinLeave extends Command
 {
     use EnkinTrait;
     /**
@@ -15,14 +15,14 @@ class EnkinLog extends Command
      *
      * @var string
      */
-    protected $signature = 'enkin:work';
+    protected $signature = 'enkin:leave';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Enkin log work';
+    protected $description = 'Enkin log leave';
 
     /**
      * Execute the console command.
@@ -40,14 +40,14 @@ class EnkinLog extends Command
             return Command::FAILURE;
         }
 
-        $work = $this->work();
+        $leave = $this->leave();
 
-        if (!$work){
-            $this->error("start working fail");
+        if (!$leave){
+            $this->error("start leaving fail");
             return Command::FAILURE;
         }
 
-        $this->info("all good. start working successfully");
+        $this->info("all good. log leave successfully");
 
         $this->driver->quit();
         return Command::SUCCESS;

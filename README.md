@@ -26,3 +26,7 @@ For example:
 Or if you want to random your log time from `8h10` to `8h29` just set in `.env` file:
 
 `ENKIN_RANDOM_TIME=true`
+
+Leave time will be 17:30
+
+All time only set on weekday

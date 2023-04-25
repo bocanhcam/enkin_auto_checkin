@@ -23,7 +23,7 @@ Trait EnkinTrait{
         $chromeOptions = new ChromeOptions();
         $chromeOptions->addArguments([
             '--disable-gpu',
-            //'--headless',
+            '--headless',
             '--no-sandbox'
         ]);
         $chromeOptions->setExperimentalOption('w3c', false);
@@ -72,5 +72,72 @@ Trait EnkinTrait{
         }
 
         return false;
+    }
+
+    public function openModal($mode): bool
+    {
+        sleep(1);
+        try {
+            $this->driver->wait()->until(
+                WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector('#ext-work-start-end-view-1 button.x-button-el'))
+            );
+
+            $buttons = $this->driver->findElements(WebDriverBy::cssSelector('#ext-work-start-end-view-1 button.x-button-el'));
+
+
+            if (!empty($buttons[$mode]) && $buttons[$mode]->isEnabled()){
+                $buttons[$mode]->click();
+            }else{
+                $this->error("button open modal is disable");
+            }
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function action(): bool
+    {
+        sleep(1);
+        try {
+            $this->driver->wait()->until(
+                WebDriverExpectedCondition::presenceOfElementLocated(WebDriverBy::cssSelector('#ext-work-input-dialog-1 button.x-button-el'))
+            );
+
+            $button = $this->driver->findElement(WebDriverBy::cssSelector('#ext-work-input-dialog-1 button.x-button-el'));
+
+            if ($button->isEnabled()){
+                $button->click();
+            }else{
+                $this->error("button log is disable");
+            }
+
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function work(){
+        $openModal = $this->openModal(EnkinConst::WORK);
+
+        if ($openModal){
+            return $this->action();
+        }
+    }
+
+    public function leave(){
+        $openModal = $this->openModal(EnkinConst::LEAVE);
+
+        if ($openModal){
+            return $this->action();
+        }
     }
 }
