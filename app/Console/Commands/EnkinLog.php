@@ -2,18 +2,14 @@
 
 namespace App\Console\Commands;
 
-use Carbon\Carbon;
-use Facebook\WebDriver\Chrome\ChromeDevToolsDriver;
-use Facebook\WebDriver\Chrome\ChromeDriver;
-use Facebook\WebDriver\Chrome\ChromeOptions;
-use Facebook\WebDriver\Remote\DesiredCapabilities;
+use App\Console\EnkinTrait;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class EnkinLog extends Command
 {
+    use EnkinTrait;
     /**
      * The name and signature of the console command.
      *
@@ -27,10 +23,6 @@ class EnkinLog extends Command
      * @var string
      */
     protected $description = 'Enkin log';
-
-    protected ChromeDriver $driver;
-
-    const BASE_URL = "https://etgroup.enkinlab.net";
 
     /**
      * Execute the console command.
@@ -63,65 +55,9 @@ class EnkinLog extends Command
         }
 
         $this->info("all good. start working successfully");
+
+        $this->driver->quit();
         return Command::SUCCESS;
-    }
-
-    public function init(): void
-    {
-        $desiredCapabilities = DesiredCapabilities::chrome();
-
-        $chromeOptions = new ChromeOptions();
-        $chromeOptions->addArguments([
-            '--disable-gpu',
-            '--headless',
-            '--no-sandbox'
-        ]);
-        $chromeOptions->setExperimentalOption('w3c', false);
-
-        $desiredCapabilities->setCapability(ChromeOptions::CAPABILITY, $chromeOptions);
-        $desiredCapabilities->setCapability( 'loggingPrefs', [
-            'browser' => 'ALL',
-            'performance' => 'ALL',
-        ]);
-
-        putenv('WEBDRIVER_CHROME_DRIVER='.base_path('chromedriver'));
-        $this->driver = ChromeDriver::start($desiredCapabilities);
-        $devTools = new ChromeDevToolsDriver($this->driver);
-        $devTools->execute('Performance.enable');
-    }
-
-    public function login($username, $password): bool
-    {
-        $this->driver->get(self::BASE_URL."/login");
-
-        try {
-            $this->driver->wait()->until(
-                WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::name('loginId'))
-            );
-
-            $this->driver->wait()->until(
-                WebDriverExpectedCondition::visibilityOfElementLocated(WebDriverBy::name('password'))
-            );
-
-            $this->driver->findElement(WebDriverBy::name('loginId'))
-                ->sendKeys($username);
-
-            $this->driver->findElement(WebDriverBy::name('password'))
-                ->sendKeys($password)
-                ->submit();
-
-            sleep(5);
-        } catch (\Exception $e) {
-            Log::info($e->getMessage());
-
-            return false;
-        }
-
-        if ($this->driver->getCurrentURL() === self::BASE_URL . "/app#top/myhome"){
-            return true;
-        }
-
-        return false;
     }
 
     public function openModal(): bool

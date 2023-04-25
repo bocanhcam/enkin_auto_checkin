@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
             $time = $start_time->copy()->addSeconds($random_seconds);
         }
 
-        $schedule->command('enkin')->weekdays()->at($time);
+        $schedule->command('enkin')->weekdays()->at($time->format('H:i:s'));
     }
 
     /**
