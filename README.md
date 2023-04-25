@@ -17,8 +17,12 @@ Start schedule to log start work
 
 `php artisan schedule:work`
 
-By default time will be log at 08:25. You can change this by changing `.env` file.
+By default, time will be logged at 08:25. You can change this by changing `.env` file.
 
 For example:
 
 `ENKIN_LOG_TIME=08:20`
+
+Or if you want to random your log time from `8h10` to `8h29` just set in `.env` file:
+
+`ENKIN_RANDOM_TIME=true`
