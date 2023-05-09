@@ -1,3 +1,6 @@
+## Requirement
+Google Chrome version 113
+
 ## Installation
 
 `cp .env.example .env`
