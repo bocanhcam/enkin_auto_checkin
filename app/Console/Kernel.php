@@ -8,24 +8,36 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    protected array $offDates = [
+        '2023-08-10',
+        '2023-08-11',
+        '2023-09-01',
+        '2023-09-04',
+    ];
     /**
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void
     {
-        $time = env("ENKIN_LOG_TIME", "08:25");
+        $currentDate = Carbon::now();
 
-        if (env("ENKIN_RANDOM_TIME")){
-            $start_time = Carbon::parse('08:10:00');
-            $end_time = Carbon::parse('08:29:00');
+        // Working days
+        if (!in_array($currentDate->toDateString(), $this->offDates)){
+            $time = env("ENKIN_LOG_TIME", "08:25");
 
-            $random_seconds = mt_rand(0, $end_time->diffInSeconds($start_time));
+            // random time start
+            if (env("ENKIN_RANDOM_TIME")){
+                $start_time = Carbon::parse('08:10:00');
+                $end_time = Carbon::parse('08:29:00');
 
-            $time = $start_time->copy()->addSeconds($random_seconds);
+                $random_seconds = mt_rand(0, $end_time->diffInSeconds($start_time));
+
+                $time = $start_time->copy()->addSeconds($random_seconds);
+            }
+
+            $schedule->command('enkin:work')->weekdays()->at($time->format('H:i:s'));
+            $schedule->command('enkin:leave')->weekdays()->at('17:30');
         }
-
-        $schedule->command('enkin:work')->weekdays()->at($time->format('H:i:s'));
-        $schedule->command('enkin:leave')->weekdays()->at('17:30');
     }
 
     /**
