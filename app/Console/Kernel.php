@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\BotRequest;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -21,21 +22,43 @@ class Kernel extends ConsoleKernel
     {
         $currentDate = Carbon::now();
 
+        $botRequest = BotRequest::query()->whereDate('date', $currentDate)->orderBy('id', 'desc')->first();
+
         // Working days
         if (!in_array($currentDate->toDateString(), $this->offDates)){
-            $time = env("ENKIN_LOG_TIME", "08:25");
+            // Set the start and end times
+            $startTime = Carbon::createFromTime(8, 10);
+            $endTime = Carbon::createFromTime(8, 25);
 
-            // random time start
-            if (env("ENKIN_RANDOM_TIME")){
-                $start_time = Carbon::parse('08:10:00');
-                $end_time = Carbon::parse('08:29:00');
+            if (!empty($botRequest)){
+                if ($botRequest->type == BotRequest::TYPE_OFF){
+                    return;
+                }
 
-                $random_seconds = mt_rand(0, $end_time->diffInSeconds($start_time));
+                if ($botRequest->type == BotRequest::TYPE_LATE_30M){
+                    $startTime->addMinutes(30);
+                    $endTime->addMinutes(30);
+                }
 
-                $time = $start_time->copy()->addSeconds($random_seconds);
+                if ($botRequest->type == BotRequest::TYPE_LATE_1h){
+                    $startTime->addHour();
+                    $endTime->addHour();
+                }
             }
 
-            $schedule->command('enkin:work')->weekdays()->at($time->format('H:i:s'));
+            // Calculate the range in minutes
+            $timeRangeInMinutes = $startTime->diffInMinutes($endTime);
+
+            // Generate a random minute offset within the range
+            $randomMinuteOffset = rand(0, $timeRangeInMinutes);
+
+            // Add the offset to the start time
+            $randomTime = $startTime->addMinutes($randomMinuteOffset);
+
+            // Format the random time as "h:i"
+            $time = $randomTime->format('H:i');
+
+            $schedule->command('enkin:work')->weekdays()->at($time);
             $schedule->command('enkin:leave')->weekdays()->at('17:30');
         }
     }
