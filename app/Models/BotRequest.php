@@ -17,4 +17,5 @@ class BotRequest extends Model
     const TYPE_LATE_30M = 0;
     const TYPE_LATE_1h = 1;
     const TYPE_OFF = 2;
+    const TYPE_MANUAL = 3;
 }

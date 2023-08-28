@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
             $endTime = Carbon::createFromTime(8, 25);
 
             if (!empty($botRequest)){
-                if ($botRequest->type == BotRequest::TYPE_OFF){
+                if ($botRequest->type == BotRequest::TYPE_OFF || $botRequest->type == BotRequest::TYPE_MANUAL){
                     return;
                 }
 
