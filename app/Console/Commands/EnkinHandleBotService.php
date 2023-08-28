@@ -7,7 +7,6 @@ use App\Models\BotRequest;
 use Carbon\Carbon;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverExpectedCondition;
-use Facebook\WebDriver\WebDriverWait;
 use Illuminate\Console\Command;
 
 class EnkinHandleBotService extends Command
@@ -82,7 +81,7 @@ class EnkinHandleBotService extends Command
                 return false;
             }
 
-            sleep(10);
+            sleep(2);
 
             $logStep2 = $this->logFormStep2($type, $date);
 
@@ -91,7 +90,7 @@ class EnkinHandleBotService extends Command
                 return false;
             }
 
-            sleep(10);
+            sleep(2);
 
             $logStep3 = $this->logFormStep3();
             if (!$logStep3){
@@ -260,7 +259,7 @@ class EnkinHandleBotService extends Command
             $buttons = $this->driver->findElements(WebDriverBy::xpath('//div[@role="button"]'));
 
             // button 0:back 1:submit
-             $buttons[1]->click();
+            // $buttons[1]->click();
         }catch (\Exception $e){
             $this->output->write($e->getMessage(), true);
             $this->error($e->getMessage());
