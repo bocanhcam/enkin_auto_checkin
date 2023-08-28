@@ -78,6 +78,7 @@ class EnkinHandleBotService extends Command
 
             if (!$logStep1){
                 $this->output->write('Log form lỗi bước 1', true);
+                $this->driver->quit();
                 return false;
             }
 
@@ -87,6 +88,7 @@ class EnkinHandleBotService extends Command
 
             if (!$logStep2){
                 $this->output->write('Log form lỗi bước 2', true);
+                $this->driver->quit();
                 return false;
             }
 
@@ -95,16 +97,18 @@ class EnkinHandleBotService extends Command
             $logStep3 = $this->logFormStep3();
             if (!$logStep3){
                 $this->output->write('Log form lỗi bước 3', true);
+                $this->driver->quit();
                 return false;
             }
 
         } catch (\Exception $e) {
             $this->output->write($e->getMessage(), true);
             $this->error($e->getMessage());
-
+            $this->driver->quit();
             return false;
         }
 
+        $this->driver->quit();
         return true;
     }
 
