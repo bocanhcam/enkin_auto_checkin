@@ -263,7 +263,7 @@ class EnkinHandleBotService extends Command
             $buttons = $this->driver->findElements(WebDriverBy::xpath('//div[@role="button"]'));
 
             // button 0:back 1:submit
-            // $buttons[1]->click();
+             $buttons[1]->click();
         }catch (\Exception $e){
             $this->output->write($e->getMessage(), true);
             $this->error($e->getMessage());
