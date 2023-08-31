@@ -26,9 +26,7 @@ class Kernel extends ConsoleKernel
 
         // Working days
         if (!in_array($currentDate->toDateString(), $this->offDates)){
-            // Set the start and end times
-            $startTime = Carbon::createFromTime(8, 10);
-            $endTime = Carbon::createFromTime(8, 25);
+            $time = Carbon::createFromTime(8, 20);
 
             if (!empty($botRequest)){
                 if ($botRequest->type == BotRequest::TYPE_OFF || $botRequest->type == BotRequest::TYPE_MANUAL){
@@ -36,29 +34,15 @@ class Kernel extends ConsoleKernel
                 }
 
                 if ($botRequest->type == BotRequest::TYPE_LATE_30M){
-                    $startTime->addMinutes(30);
-                    $endTime->addMinutes(30);
+                    $time->addMinutes(30);
                 }
 
                 if ($botRequest->type == BotRequest::TYPE_LATE_1h){
-                    $startTime->addHour();
-                    $endTime->addHour();
+                    $time->addHour();
                 }
             }
 
-            // Calculate the range in minutes
-            $timeRangeInMinutes = $startTime->diffInMinutes($endTime);
-
-            // Generate a random minute offset within the range
-            $randomMinuteOffset = rand(0, $timeRangeInMinutes);
-
-            // Add the offset to the start time
-            $randomTime = $startTime->addMinutes($randomMinuteOffset);
-
-            // Format the random time as "h:i"
-            $time = $randomTime->format('H:i');
-
-            $schedule->command('enkin:work')->weekdays()->at($time);
+            $schedule->command('enkin:work')->weekdays()->at($time->format('H:i'));
             $schedule->command('enkin:leave')->weekdays()->at('17:30');
         }
     }
