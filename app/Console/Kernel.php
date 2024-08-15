@@ -26,7 +26,9 @@ class Kernel extends ConsoleKernel
 
         // Working days
         if (!in_array($currentDate->toDateString(), $this->offDates)){
-            $time = Carbon::createFromTime(8, 20);
+            $randomMinute = rand(20, 28);
+
+            $time = Carbon::createFromTime(8, $randomMinute);
 
             if (!empty($botRequest)){
                 if ($botRequest->type == BotRequest::TYPE_OFF || $botRequest->type == BotRequest::TYPE_MANUAL){
